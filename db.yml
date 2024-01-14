@@ -1,0 +1,27 @@
+name: "netflex"
+
+services:
+
+  users_db:
+    image: mysql:latest
+    ports:
+      - 33001:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: users_db
+
+  movies_db:
+    image: mysql:latest
+    ports:
+      - 33002:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: movies_db
+
+  comments_db:
+    image: mysql:latest
+    ports:
+      - 33003:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: comments_db

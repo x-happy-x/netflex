@@ -1,0 +1,13 @@
+GET http://localhost:8083/comment?id=1
+
+###
+
+POST http://localhost:8083/comment
+Content-Type: application/json
+
+{
+  "id": 1,
+  "userId": 2,
+  "filmId": 1,
+  "text": "Фу, такое себе"
+}

@@ -1,0 +1,31 @@
+// Запуск процесса
+POST http://localhost:8801/camunda/engine-rest/process-definition/key/app-process/start
+Content-Type: application/json
+
+{
+  "variables": {
+
+  },
+  "businessKey": "testKey",
+  "withVariablesInReturn": true
+}
+
+###
+
+// Список процессов
+GET http://localhost:8801/engine-rest/task?processInstanceId=7b54e8c1-b26f-11ee-914e-ac82474bebd8
+
+###
+
+# Завершение задачи
+POST http://localhost:8801/engine-rest/task/96e4b9de-b26f-11ee-914e-ac82474bebd8/complete
+Content-Type: application/json
+
+{
+  "variables": {
+    "amount": {
+      "value": 1,
+      "type": "Integer"
+    }
+  }
+}
