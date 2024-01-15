@@ -12,6 +12,10 @@ window.onload = (e) => {
     }).then(r => {
         if (r.status === 200) {
             return r.json()
+        } else {
+            console.log(r.statusText)
         }
+    }).then(json => {
+        console.log(json)
     })
 }

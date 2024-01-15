@@ -10,37 +10,35 @@ import org.springframework.stereotype.Component;
 import ru.netflex.server.movies.Movie;
 import ru.netflex.server.movies.MovieService;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 @Log
 @Component
-@ExternalTaskSubscription("load-movie")
-public class LoadMovie implements ExternalTaskHandler {
+@ExternalTaskSubscription("check-movie")
+public class CheckMovieTask implements ExternalTaskHandler {
 
     private final MovieService movieService;
 
     @Autowired
-    public LoadMovie(MovieService movieService) {
+    public CheckMovieTask(MovieService movieService) {
         this.movieService = movieService;
     }
 
     @Override
     public void execute(ExternalTask externalTask, ExternalTaskService externalTaskService) {
-        log.log(Level.INFO, "LoadMovie started");
+        log.log(Level.INFO, "CheckMovie started");
 
         Long movieId = externalTask.getVariable("movieId");
         log.log(Level.INFO, "movieId: " + movieId);
 
         Movie movie = movieService.getMovieById(movieId);
-        Map<String, Object> result = new HashMap<>();
-        result.put("movie", movie);
-        log.log(Level.INFO, "Movie: " + movie.getTitles().get(0));
+        if (movie == null) {
+            log.log(Level.INFO, "CheckMovie not found movie");
+            externalTaskService.handleBpmnError(externalTask, "404", "Movie not found");
+            return;
+        }
 
-        externalTaskService.complete(externalTask, result);
-        log.log(Level.INFO, "LoadMovie ended successfully");
+        externalTaskService.complete(externalTask);
+        log.log(Level.INFO, "CheckMovie ended successfully");
     }
 }

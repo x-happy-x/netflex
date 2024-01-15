@@ -8,25 +8,21 @@ import org.camunda.bpm.client.task.ExternalTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import ru.netflex.server.auth.UserDto;
 import ru.netflex.server.comments.Comment;
 import ru.netflex.server.comments.CommentService;
-import ru.netflex.server.movies.Movie;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
 @Log
 @Component
 @ExternalTaskSubscription("write-comment")
-public class WriteComment implements ExternalTaskHandler {
+public class WriteCommentTask implements ExternalTaskHandler {
 
     private final CommentService commentService;
 
     @Autowired
-    public WriteComment(@Qualifier("getCommentService") CommentService commentService) {
+    public WriteCommentTask(@Qualifier("getCommentService") CommentService commentService) {
         this.commentService = commentService;
     }
 
@@ -35,14 +31,25 @@ public class WriteComment implements ExternalTaskHandler {
     public void execute(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         log.log(Level.INFO, "WriteComment started");
 
+        String commentText = externalTask.getVariable("comment");
+        UserDto user = externalTask.getVariable("user");
         Long movieId = externalTask.getVariable("movieId");
-        log.log(Level.INFO, "movieId: " + movieId);
 
-        List<Comment> comments = commentService.getFilmComments(movieId);
-        Map<String, Object> result = Collections.singletonMap("comments", comments);
-        log.log(Level.INFO, "Count comments: " + comments.size());
+        log.log(Level.INFO, "user: " + user.getUsername());
+        log.log(Level.INFO, "comment: " + commentText);
 
-        externalTaskService.complete(externalTask, result);
+        Comment comment = new Comment();
+        comment.setText(commentText);
+        comment.setUserId(user.getId());
+        comment.setFilmId(movieId);
+        comment = commentService.setFilmComment(comment);
+
+        if (comment == null) {
+            externalTaskService.handleBpmnError(externalTask, "401", "Invalid userId or movieId");
+            return;
+        }
+
+        externalTaskService.complete(externalTask);
         log.log(Level.INFO, "WriteComment ended successfully");
     }
 }

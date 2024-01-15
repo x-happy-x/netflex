@@ -11,7 +11,6 @@ import ru.netflex.server.movies.Movie;
 import ru.netflex.server.movies.MovieService;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -19,12 +18,12 @@ import java.util.logging.Level;
 @Log
 @Component
 @ExternalTaskSubscription("load-movies")
-public class LoadMovies implements ExternalTaskHandler {
+public class LoadMoviesTask implements ExternalTaskHandler {
 
     private final MovieService movieService;
 
     @Autowired
-    public LoadMovies(MovieService movieService) {
+    public LoadMoviesTask(MovieService movieService) {
         this.movieService = movieService;
     }
 
