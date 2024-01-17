@@ -14,6 +14,7 @@
         <module name="auth-server" />
         <module name="movies-client" />
         <module name="client" />
+        <module name="comments-client" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
